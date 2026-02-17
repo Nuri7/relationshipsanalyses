@@ -49,7 +49,7 @@ const Feedback = () => {
         <Card>
           <CardHeader>
             <CardTitle>Send Feedback</CardTitle>
-            <CardDescription>Help us improve Chat Analyzer</CardDescription>
+            <CardDescription>Help us improve Relationship Analyzer</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">

@@ -49,7 +49,7 @@ const Auth = () => {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary">
             <MessageSquareText className="h-7 w-7 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl">Chat Analyzer</CardTitle>
+          <CardTitle className="text-2xl">Relationship Analyzer</CardTitle>
           <CardDescription>
             {isLogin ? "Sign in to analyze your chats" : "Create an account to get started"}
           </CardDescription>
