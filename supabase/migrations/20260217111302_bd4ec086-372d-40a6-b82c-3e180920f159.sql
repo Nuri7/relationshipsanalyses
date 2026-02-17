@@ -1,0 +1,1 @@
+ALTER TABLE public.chat_uploads ADD COLUMN category_override text DEFAULT NULL;

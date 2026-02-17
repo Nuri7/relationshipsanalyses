@@ -66,6 +66,7 @@ export type Database = {
       }
       chat_uploads: {
         Row: {
+          category_override: string | null
           created_at: string
           error_message: string | null
           file_path: string | null
@@ -77,6 +78,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          category_override?: string | null
           created_at?: string
           error_message?: string | null
           file_path?: string | null
@@ -88,6 +90,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          category_override?: string | null
           created_at?: string
           error_message?: string | null
           file_path?: string | null
