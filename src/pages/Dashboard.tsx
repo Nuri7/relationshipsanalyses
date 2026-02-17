@@ -22,7 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { MessageSquareText, Upload, LogOut, Clock, Users, MessageCircle, Trash2, Home, Heart, Briefcase, FolderSync } from "lucide-react";
+import { MessageSquareText, Upload, LogOut, Clock, Users, MessageCircle, Trash2, Home, Handshake, Briefcase, FolderSync } from "lucide-react";
 import { format } from "date-fns";
 
 interface ChatUpload {
@@ -167,7 +167,7 @@ const Dashboard = () => {
             <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
               {[
                 { key: "family", label: "Family", icon: <Home className="mr-2 h-4 w-4" /> },
-                { key: "friends", label: "Friends", icon: <Heart className="mr-2 h-4 w-4" /> },
+                { key: "friends", label: "Friends", icon: <Handshake className="mr-2 h-4 w-4" /> },
                 { key: "professional", label: "Professional", icon: <Briefcase className="mr-2 h-4 w-4" /> },
               ].map((cat) => (
                 <DropdownMenuItem
@@ -264,7 +264,7 @@ const Dashboard = () => {
           <div className="space-y-8">
             {[
               { key: "family", label: "Family", icon: <Home className="h-5 w-5" />, hsl: "var(--category-family)" },
-              { key: "friends", label: "Friends", icon: <Heart className="h-5 w-5" />, hsl: "var(--category-friends)" },
+              { key: "friends", label: "Friends", icon: <Handshake className="h-5 w-5" />, hsl: "var(--category-friends)" },
               { key: "professional", label: "Professional", icon: <Briefcase className="h-5 w-5" />, hsl: "var(--category-professional)" },
             ].map(({ key, label, icon, hsl }) => {
               const items = uploads.filter((u) => u.category === key);
