@@ -22,7 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { MessageSquareText, Upload, LogOut, Clock, Users, MessageCircle, Trash2, Home, Handshake, Briefcase, FolderSync } from "lucide-react";
+import { Network, Upload, LogOut, Clock, Users, MessageCircle, Trash2, Home, Handshake, Briefcase, FolderSync } from "lucide-react";
 import { format } from "date-fns";
 
 interface ChatUpload {
@@ -209,10 +209,10 @@ const Dashboard = () => {
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-              <MessageSquareText className="h-5 w-5 text-primary-foreground" />
+              <Network className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-lg font-bold">Chat Analyzer</h1>
+              <h1 className="text-lg font-bold">Relationship Analyzer</h1>
               <p className="text-xs text-muted-foreground">Welcome, {userName}</p>
             </div>
           </div>
@@ -252,7 +252,7 @@ const Dashboard = () => {
         ) : uploads.length === 0 ? (
           <Card className="border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-16">
-              <MessageSquareText className="mb-4 h-12 w-12 text-muted-foreground" />
+              <Network className="mb-4 h-12 w-12 text-muted-foreground" />
               <h3 className="mb-2 text-lg font-medium">No chats analyzed yet</h3>
               <p className="mb-6 text-muted-foreground">Upload a WhatsApp chat export to get started</p>
               <Link to="/upload">
