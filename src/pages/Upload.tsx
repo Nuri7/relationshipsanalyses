@@ -85,8 +85,9 @@ const Upload = () => {
       setProgress(30);
       setStatus("Uploading file...");
 
-      // Upload file to storage
-      const filePath = `${user.id}/${Date.now()}_${friendlyName}`;
+      // Upload file to storage - sanitize filename for storage compatibility
+      const sanitizedName = friendlyName.replace(/[^\w.\-]/g, "_");
+      const filePath = `${user.id}/${Date.now()}_${sanitizedName}`;
       const { error: storageError } = await supabase.storage
         .from("chat-files")
         .upload(filePath, file);
