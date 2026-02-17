@@ -127,6 +127,11 @@ const CommunicationMatrix = () => {
             <h1 className="text-lg font-bold">Communication Matrix</h1>
             <p className="text-xs text-muted-foreground">Your style across all conversations</p>
           </div>
+          <Link to="/my-relationships">
+            <Button variant="outline" size="sm">
+              <Users className="mr-1 h-4 w-4" /> My Web
+            </Button>
+          </Link>
         </div>
       </header>
 
