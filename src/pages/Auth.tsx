@@ -46,8 +46,8 @@ const Auth = () => {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary">
-            <MessageSquareText className="h-7 w-7 text-primary-foreground" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary overflow-hidden">
+            <img src="/favicon.png" alt="Logo" className="h-10 w-10 object-contain" />
           </div>
           <CardTitle className="text-2xl">Relationship Analyzer</CardTitle>
           <CardDescription>
