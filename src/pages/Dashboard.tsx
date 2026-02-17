@@ -4,7 +4,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquareText, Upload, LogOut, Clock, Users, MessageCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { MessageSquareText, Upload, LogOut, Clock, Users, MessageCircle, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 
 interface ChatUpload {
@@ -49,6 +61,23 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+  };
+
+  const { toast } = useToast();
+
+  const handleDelete = async (e: React.MouseEvent, uploadId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      // Delete analysis first (foreign key)
+      await supabase.from("chat_analyses").delete().eq("upload_id", uploadId);
+      const { error } = await supabase.from("chat_uploads").delete().eq("id", uploadId);
+      if (error) throw error;
+      setUploads((prev) => prev.filter((u) => u.id !== uploadId));
+      toast({ title: "Chat deleted" });
+    } catch (err: any) {
+      toast({ title: "Delete failed", description: err.message, variant: "destructive" });
+    }
   };
 
   const statusColor = (status: string) => {
@@ -140,6 +169,32 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <Badge variant={statusColor(upload.status) as any}>{upload.status}</Badge>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="shrink-0 text-muted-foreground hover:text-destructive"
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete this chat?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will permanently delete "{upload.filename}" and its analysis. This cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={(e) => handleDelete(e, upload.id)}>
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </CardContent>
                 </Card>
               </Link>
