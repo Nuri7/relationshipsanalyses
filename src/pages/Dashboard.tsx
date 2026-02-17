@@ -4,6 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -16,7 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { MessageSquareText, Upload, LogOut, Clock, Users, MessageCircle, Trash2, Home, Heart, Briefcase } from "lucide-react";
+import { MessageSquareText, Upload, LogOut, Clock, Users, MessageCircle, Trash2, Home, Heart, Briefcase, FolderSync } from "lucide-react";
 import { format } from "date-fns";
 
 interface ChatUpload {
@@ -79,13 +85,28 @@ const Dashboard = () => {
       }
     }
 
-    const enriched = ((uploadsData as ChatUpload[]) || []).map((u) => ({
+    const enriched = ((uploadsData as any[]) || []).map((u) => ({
       ...u,
-      category: categoryMap.get(u.id) || "uncategorized",
+      category: u.category_override || categoryMap.get(u.id) || "uncategorized",
     }));
 
     setUploads(enriched);
     setLoading(false);
+  };
+
+  const handleCategoryChange = async (uploadId: string, newCategory: string) => {
+    const { error } = await supabase
+      .from("chat_uploads")
+      .update({ category_override: newCategory } as any)
+      .eq("id", uploadId);
+    if (error) {
+      toast({ title: "Failed to update category", variant: "destructive" });
+      return;
+    }
+    setUploads((prev) =>
+      prev.map((u) => (u.id === uploadId ? { ...u, category: newCategory } : u))
+    );
+    toast({ title: `Moved to ${newCategory}` });
   };
 
   const handleLogout = async () => {
@@ -137,6 +158,28 @@ const Dashboard = () => {
             </div>
           </div>
           <Badge variant={statusColor(upload.status) as any}>{upload.status}</Badge>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground hover:text-foreground" onClick={(e) => e.stopPropagation()}>
+                <FolderSync className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+              {[
+                { key: "family", label: "Family", icon: <Home className="mr-2 h-4 w-4" /> },
+                { key: "friends", label: "Friends", icon: <Heart className="mr-2 h-4 w-4" /> },
+                { key: "professional", label: "Professional", icon: <Briefcase className="mr-2 h-4 w-4" /> },
+              ].map((cat) => (
+                <DropdownMenuItem
+                  key={cat.key}
+                  onClick={() => handleCategoryChange(upload.id, cat.key)}
+                  className={upload.category === cat.key ? "bg-accent" : ""}
+                >
+                  {cat.icon}{cat.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground hover:text-destructive" onClick={(e) => e.stopPropagation()}>
