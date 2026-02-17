@@ -13,6 +13,7 @@ import Upload from "./pages/Upload";
 import Analysis from "./pages/Analysis";
 import Feedback from "./pages/Feedback";
 import CommunicationMatrix from "./pages/CommunicationMatrix";
+import MyRelationships from "./pages/MyRelationships";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -66,6 +67,7 @@ const App = () => {
             <Route path="/analysis/:uploadId" element={<ProtectedRoute session={session}><Analysis /></ProtectedRoute>} />
             <Route path="/feedback" element={<ProtectedRoute session={session}><Feedback /></ProtectedRoute>} />
             <Route path="/matrix" element={<ProtectedRoute session={session}><CommunicationMatrix /></ProtectedRoute>} />
+            <Route path="/my-relationships" element={<ProtectedRoute session={session}><MyRelationships /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
