@@ -77,11 +77,16 @@ const Upload = () => {
         return;
       }
 
+      // Generate a friendly filename from participant names
+      const friendlyName = parsed.participants.length > 0
+        ? parsed.participants.join(" & ") + ".txt"
+        : file.name;
+
       setProgress(30);
       setStatus("Uploading file...");
 
       // Upload file to storage
-      const filePath = `${user.id}/${Date.now()}_${file.name}`;
+      const filePath = `${user.id}/${Date.now()}_${friendlyName}`;
       const { error: storageError } = await supabase.storage
         .from("chat-files")
         .upload(filePath, file);
@@ -96,7 +101,7 @@ const Upload = () => {
         .from("chat_uploads")
         .insert({
           user_id: user.id,
-          filename: file.name,
+          filename: friendlyName,
           file_path: filePath,
           status: "parsing",
           message_count: parsed.messages.length,
