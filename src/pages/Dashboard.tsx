@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +30,7 @@ interface ChatUpload {
 }
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [uploads, setUploads] = useState<ChatUpload[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("");
@@ -145,8 +146,15 @@ const Dashboard = () => {
         ) : (
           <div className="space-y-3">
             {uploads.map((upload) => (
-              <Link key={upload.id} to={upload.status === "completed" ? `/analysis/${upload.id}` : "#"}>
-                <Card className="transition-shadow hover:shadow-md">
+              <div key={upload.id} className="relative">
+                <Card
+                  className="cursor-pointer transition-shadow hover:shadow-md"
+                  onClick={() => {
+                    if (upload.status === "completed") {
+                      navigate(`/analysis/${upload.id}`);
+                    }
+                  }}
+                >
                   <CardContent className="flex items-center gap-4 py-4">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
                       <MessageCircle className="h-6 w-6 text-primary" />
@@ -175,7 +183,7 @@ const Dashboard = () => {
                           variant="ghost"
                           size="icon"
                           className="shrink-0 text-muted-foreground hover:text-destructive"
-                          onClick={(e) => e.preventDefault()}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -197,7 +205,7 @@ const Dashboard = () => {
                     </AlertDialog>
                   </CardContent>
                 </Card>
-              </Link>
+              </div>
             ))}
           </div>
         )}
