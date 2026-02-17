@@ -21,6 +21,7 @@ export type Database = {
           characteristics: Json | null
           created_at: string
           id: string
+          participants: Json | null
           relationships: Json | null
           summary: string | null
           updated_at: string
@@ -33,6 +34,7 @@ export type Database = {
           characteristics?: Json | null
           created_at?: string
           id?: string
+          participants?: Json | null
           relationships?: Json | null
           summary?: string | null
           updated_at?: string
@@ -45,6 +47,7 @@ export type Database = {
           characteristics?: Json | null
           created_at?: string
           id?: string
+          participants?: Json | null
           relationships?: Json | null
           summary?: string | null
           updated_at?: string
@@ -55,7 +58,7 @@ export type Database = {
           {
             foreignKeyName: "chat_analyses_upload_id_fkey"
             columns: ["upload_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "chat_uploads"
             referencedColumns: ["id"]
           },
@@ -65,6 +68,7 @@ export type Database = {
         Row: {
           created_at: string
           error_message: string | null
+          file_path: string | null
           filename: string
           id: string
           message_count: number
@@ -75,6 +79,7 @@ export type Database = {
         Insert: {
           created_at?: string
           error_message?: string | null
+          file_path?: string | null
           filename: string
           id?: string
           message_count?: number
@@ -85,6 +90,7 @@ export type Database = {
         Update: {
           created_at?: string
           error_message?: string | null
+          file_path?: string | null
           filename?: string
           id?: string
           message_count?: number
