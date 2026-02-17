@@ -263,18 +263,26 @@ const Dashboard = () => {
         ) : (
           <div className="space-y-8">
             {[
-              { key: "family", label: "Family", icon: <Home className="h-5 w-5" /> },
-              { key: "friends", label: "Friends", icon: <Heart className="h-5 w-5" /> },
-              { key: "professional", label: "Professional", icon: <Briefcase className="h-5 w-5" /> },
-            ].map(({ key, label, icon }) => {
+              { key: "family", label: "Family", icon: <Home className="h-5 w-5" />, hsl: "var(--category-family)" },
+              { key: "friends", label: "Friends", icon: <Heart className="h-5 w-5" />, hsl: "var(--category-friends)" },
+              { key: "professional", label: "Professional", icon: <Briefcase className="h-5 w-5" />, hsl: "var(--category-professional)" },
+            ].map(({ key, label, icon, hsl }) => {
               const items = uploads.filter((u) => u.category === key);
               if (items.length === 0) return null;
               return (
-                <div key={key}>
-                  <div className="mb-3 flex items-center gap-2 text-muted-foreground">
+                <div
+                  key={key}
+                  className="rounded-2xl border p-5"
+                  style={{
+                    borderColor: `hsl(${hsl} / 0.25)` as any,
+                    backgroundColor: `hsl(${hsl} / 0.04)` as any,
+                    "--cat-color": `hsl(${hsl})`,
+                  } as React.CSSProperties}
+                >
+                  <div className="mb-4 flex items-center gap-2" style={{ color: `hsl(${hsl})` }}>
                     {icon}
-                    <h3 className="text-sm font-semibold uppercase tracking-wide">{label}</h3>
-                    <Badge variant="secondary" className="ml-1">{items.length}</Badge>
+                    <h3 className="text-sm font-bold uppercase tracking-wide">{label}</h3>
+                    <Badge className="ml-1 border-0" style={{ backgroundColor: `hsl(${hsl} / 0.15)`, color: `hsl(${hsl})` }}>{items.length}</Badge>
                   </div>
                   <div className="space-y-3">
                     {items.map((upload) => (
@@ -284,21 +292,26 @@ const Dashboard = () => {
                 </div>
               );
             })}
-            {/* Uncategorized (pending/error uploads without analysis) */}
-            {uploads.filter((u) => u.category === "uncategorized").length > 0 && (
-              <div>
-                <div className="mb-3 flex items-center gap-2 text-muted-foreground">
-                  <Users className="h-5 w-5" />
-                  <h3 className="text-sm font-semibold uppercase tracking-wide">Other</h3>
-                  <Badge variant="secondary" className="ml-1">{uploads.filter((u) => u.category === "uncategorized").length}</Badge>
+            {/* Uncategorized */}
+            {(() => {
+              const uncategorized = uploads.filter((u) => u.category === "uncategorized");
+              if (uncategorized.length === 0) return null;
+              const hsl = "var(--category-other)";
+              return (
+                <div className="rounded-2xl border p-5" style={{ borderColor: `hsl(${hsl} / 0.25)`, backgroundColor: `hsl(${hsl} / 0.04)` }}>
+                  <div className="mb-4 flex items-center gap-2" style={{ color: `hsl(${hsl})` }}>
+                    <Users className="h-5 w-5" />
+                    <h3 className="text-sm font-bold uppercase tracking-wide">Other</h3>
+                    <Badge className="ml-1 border-0" style={{ backgroundColor: `hsl(${hsl} / 0.15)`, color: `hsl(${hsl})` }}>{uncategorized.length}</Badge>
+                  </div>
+                  <div className="space-y-3">
+                    {uncategorized.map((upload) => (
+                      <UploadCard key={upload.id} upload={upload} navigate={navigate} handleDelete={handleDelete} statusColor={statusColor} />
+                    ))}
+                  </div>
                 </div>
-                <div className="space-y-3">
-                  {uploads.filter((u) => u.category === "uncategorized").map((upload) => (
-                    <UploadCard key={upload.id} upload={upload} navigate={navigate} handleDelete={handleDelete} statusColor={statusColor} />
-                  ))}
-                </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
         )}
       </main>
