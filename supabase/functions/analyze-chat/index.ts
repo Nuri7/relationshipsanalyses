@@ -60,7 +60,8 @@ Return ONLY valid JSON, no markdown.`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
+        max_tokens: 4096,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: truncatedText },
@@ -85,9 +86,17 @@ Return ONLY valid JSON, no markdown.`;
     }
 
     const aiResult = await response.json();
+    console.log("AI response status:", response.status);
+    console.log("AI result keys:", Object.keys(aiResult));
+    console.log("AI choices length:", aiResult.choices?.length);
+    console.log("AI finish_reason:", aiResult.choices?.[0]?.finish_reason);
+    
     const content = aiResult.choices?.[0]?.message?.content;
     
-    if (!content) throw new Error("No content in AI response");
+    if (!content) {
+      console.error("Full AI response:", JSON.stringify(aiResult).slice(0, 500));
+      throw new Error("No content in AI response. Finish reason: " + (aiResult.choices?.[0]?.finish_reason || "unknown"));
+    }
 
     // Parse the JSON from AI response (strip markdown code fences if present)
     let cleanContent = content.trim();
