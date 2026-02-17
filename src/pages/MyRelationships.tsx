@@ -136,47 +136,6 @@ const MyRelationships = () => {
     messages: c.messageCount,
   }));
 
-  // Build traits radar: axes = trait dimensions, one series per person
-  const TRAIT_KEYWORDS: Record<string, string[]> = {
-    Formality: ["formal", "polite", "professional", "respectful", "courteous", "proper"],
-    Humor: ["humor", "funny", "witty", "jokes", "sarcastic", "playful", "lighthearted"],
-    Warmth: ["warm", "caring", "supportive", "empathetic", "kind", "loving", "affectionate"],
-    Directness: ["direct", "blunt", "assertive", "straightforward", "honest", "frank"],
-    Energy: ["enthusiastic", "energetic", "excited", "passionate", "lively", "animated"],
-  };
-
-  const traitDimensions = Object.keys(TRAIT_KEYWORDS);
-
-  const scorePerson = (conn: ConnectionData) => {
-    const allText = [...conn.userTraits, conn.userTone, conn.description].join(" ").toLowerCase();
-    const scores: Record<string, number> = {};
-    for (const [dim, keywords] of Object.entries(TRAIT_KEYWORDS)) {
-      const hits = keywords.filter((kw) => allText.includes(kw)).length;
-      // Score 0-10 scale: each keyword match = ~3 points, capped at 10
-      scores[dim] = Math.min(10, Math.round((hits / keywords.length) * 10));
-      // Boost if no data at all so chart isn't empty — give minimum 1 if there's any text
-      if (scores[dim] === 0 && allText.length > 0) scores[dim] = 1;
-    }
-    // Emoji usage score based on count
-    return scores;
-  };
-
-  const traitsRadarData = traitDimensions.map((dim) => {
-    const entry: Record<string, any> = { trait: dim };
-    connections.forEach((conn) => {
-      entry[conn.name] = scorePerson(conn)[dim];
-    });
-    return entry;
-  });
-
-  // Add emoji usage as a dimension
-  const maxEmojis = Math.max(1, ...connections.map((c) => c.userEmojis.length));
-  traitsRadarData.push({
-    trait: "Emoji Use",
-    ...Object.fromEntries(
-      connections.map((c) => [c.name, Math.round((c.userEmojis.length / maxEmojis) * 10)])
-    ),
-  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -259,67 +218,6 @@ const MyRelationships = () => {
                       />
                     </RadarChart>
                   </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              {/* Traits radar chart */}
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Communication Style</CardTitle>
-                  <CardDescription>How your traits compare across people</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={380}>
-                    <RadarChart data={traitsRadarData} outerRadius="75%">
-                      <PolarGrid stroke="hsl(var(--border))" />
-                      <PolarAngleAxis
-                        dataKey="trait"
-                        tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
-                      />
-                      <PolarRadiusAxis
-                        domain={[0, 10]}
-                        tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                        axisLine={false}
-                      />
-                      {connections.map((conn, i) => (
-                        <Radar
-                          key={conn.name}
-                          name={conn.name}
-                          dataKey={conn.name}
-                          stroke={COLORS[i % COLORS.length]}
-                          fill={COLORS[i % COLORS.length]}
-                          fillOpacity={0.1}
-                          strokeWidth={2}
-                        />
-                      ))}
-                      <Tooltip
-                        content={({ label, payload }) => {
-                          if (!payload?.length) return null;
-                          return (
-                            <div className="rounded-lg border bg-card px-3 py-2 shadow-md">
-                              <p className="text-sm font-medium mb-1">{label}</p>
-                              {payload.map((p: any, i: number) => (
-                                <div key={i} className="flex items-center gap-2 text-xs">
-                                  <div className="h-2 w-2 rounded-full" style={{ backgroundColor: p.stroke }} />
-                                  <span className="text-muted-foreground">{p.name}:</span>
-                                  <span className="font-medium">{p.value}/10</span>
-                                </div>
-                              ))}
-                            </div>
-                          );
-                        }}
-                      />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                  {/* Legend */}
-                  <div className="mt-2 flex flex-wrap justify-center gap-3">
-                    {connections.map((conn, i) => (
-                      <div key={conn.name} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                        {conn.name}
-                      </div>
-                    ))}
-                  </div>
                 </CardContent>
               </Card>
             </div>
