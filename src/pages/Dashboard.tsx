@@ -105,6 +105,11 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Link to="/matrix">
+              <Button variant="ghost" size="sm">
+                <Users className="mr-1 h-4 w-4" /> Matrix
+              </Button>
+            </Link>
             <Link to="/feedback">
               <Button variant="ghost" size="sm">Feedback</Button>
             </Link>
