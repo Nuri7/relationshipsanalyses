@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { MessageSquareText } from "lucide-react";
+import { MessageSquareText, Zap } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -74,6 +75,33 @@ const Auth = () => {
               {loading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
             </Button>
           </form>
+          <div className="my-4 flex items-center gap-3">
+            <Separator className="flex-1" />
+            <span className="text-xs text-muted-foreground">OR</span>
+            <Separator className="flex-1" />
+          </div>
+          <Button
+            variant="outline"
+            className="w-full gap-2"
+            disabled={loading}
+            onClick={async () => {
+              setLoading(true);
+              try {
+                const { error } = await supabase.auth.signInWithPassword({
+                  email: "demo@example.com",
+                  password: "demo1234",
+                });
+                if (error) throw error;
+              } catch (error: any) {
+                toast({ title: "Error", description: error.message, variant: "destructive" });
+              } finally {
+                setLoading(false);
+              }
+            }}
+          >
+            <Zap className="h-4 w-4" />
+            Quick Demo Login
+          </Button>
           <p className="mt-4 text-center text-sm text-muted-foreground">
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <button onClick={() => setIsLogin(!isLogin)} className="font-medium text-primary hover:underline">
