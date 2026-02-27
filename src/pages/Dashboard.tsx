@@ -145,59 +145,63 @@ const Dashboard = () => {
         className="cursor-pointer transition-shadow hover:shadow-md"
         onClick={() => { if (upload.status === "completed") navigate(`/analysis/${upload.id}`); }}
       >
-        <CardContent className="flex items-start gap-3 py-4 sm:items-center sm:gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 sm:h-12 sm:w-12">
-            <MessageCircle className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium sm:text-base">{upload.filename}</p>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground sm:text-sm">
-              <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{format(new Date(upload.created_at), "MMM d")}</span>
-              <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" />{upload.message_count}</span>
-              <span className="flex items-center gap-1"><Users className="h-3 w-3" />{upload.participant_count}</span>
+        <CardContent className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+              <MessageCircle className="h-5 w-5 text-primary" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium">{upload.filename}</p>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{format(new Date(upload.created_at), "MMM d")}</span>
+                <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" />{upload.message_count}</span>
+                <span className="flex items-center gap-1"><Users className="h-3 w-3" />{upload.participant_count}</span>
+              </div>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="mt-2 flex items-center justify-between pl-[52px]">
             <Badge variant={statusColor(upload.status) as any} className="text-xs">{upload.status}</Badge>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground hover:text-foreground" onClick={(e) => e.stopPropagation()}>
-                <FolderSync className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-              {[
-                { key: "family", label: "Family", icon: <Home className="mr-2 h-4 w-4" /> },
-                { key: "friends", label: "Friends", icon: <Handshake className="mr-2 h-4 w-4" /> },
-                { key: "professional", label: "Professional", icon: <Briefcase className="mr-2 h-4 w-4" /> },
-              ].map((cat) => (
-                <DropdownMenuItem
-                  key={cat.key}
-                  onClick={() => handleCategoryChange(upload.id, cat.key)}
-                  className={upload.category === cat.key ? "bg-accent" : ""}
-                >
-                  {cat.icon}{cat.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground hover:text-destructive" onClick={(e) => e.stopPropagation()}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete this chat?</AlertDialogTitle>
-                <AlertDialogDescription>This will permanently delete "{upload.filename}" and its analysis.</AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={(e) => handleDelete(e, upload.id)}>Delete</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+            <div className="flex items-center gap-0.5">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={(e) => e.stopPropagation()}>
+                    <FolderSync className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                  {[
+                    { key: "family", label: "Family", icon: <Home className="mr-2 h-4 w-4" /> },
+                    { key: "friends", label: "Friends", icon: <Handshake className="mr-2 h-4 w-4" /> },
+                    { key: "professional", label: "Professional", icon: <Briefcase className="mr-2 h-4 w-4" /> },
+                  ].map((cat) => (
+                    <DropdownMenuItem
+                      key={cat.key}
+                      onClick={() => handleCategoryChange(upload.id, cat.key)}
+                      className={upload.category === cat.key ? "bg-accent" : ""}
+                    >
+                      {cat.icon}{cat.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={(e) => e.stopPropagation()}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete this chat?</AlertDialogTitle>
+                    <AlertDialogDescription>This will permanently delete "{upload.filename}" and its analysis.</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={(e) => handleDelete(e, upload.id)}>Delete</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
         </CardContent>
       </Card>
