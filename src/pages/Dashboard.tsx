@@ -22,7 +22,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Network, Upload, LogOut, Clock, Users, MessageCircle, Trash2, Home, Handshake, Briefcase, FolderSync } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Network, Upload, LogOut, Clock, Users, MessageCircle, Trash2, Home, Handshake, Briefcase, FolderSync, Share2, Copy, Check, Link as LinkIcon } from "lucide-react";
 import { format } from "date-fns";
 
 interface ChatUpload {
@@ -108,12 +117,56 @@ const Dashboard = () => {
     );
     toast({ title: `Moved to ${newCategory}` });
   };
+  const [shareLink, setShareLink] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
 
   const { toast } = useToast();
+
+  const handleShare = async () => {
+    setShareLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Check if a share already exists
+      const { data: existing } = await supabase
+        .from("dashboard_shares")
+        .select("token")
+        .eq("owner_id", user.id)
+        .limit(1);
+
+      let token: string;
+      if (existing && existing.length > 0) {
+        token = (existing[0] as any).token;
+      } else {
+        const { data, error } = await supabase
+          .from("dashboard_shares")
+          .insert({ owner_id: user.id } as any)
+          .select("token")
+          .single();
+        if (error) throw error;
+        token = (data as any).token;
+      }
+
+      setShareLink(`${window.location.origin}/shared/${token}`);
+    } catch (err: any) {
+      toast({ title: "Failed to create share link", description: err.message, variant: "destructive" });
+    } finally {
+      setShareLoading(false);
+    }
+  };
+
+  const handleCopyLink = async () => {
+    await navigator.clipboard.writeText(shareLink);
+    setCopied(true);
+    toast({ title: "Link copied to clipboard!" });
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleDelete = async (e: React.MouseEvent, uploadId: string) => {
     e.preventDefault();
@@ -223,6 +276,33 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-1">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={handleShare}>
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Share your dashboard</DialogTitle>
+                  <DialogDescription>
+                    Anyone with this link can view your analyses after signing in.
+                  </DialogDescription>
+                </DialogHeader>
+                {shareLoading ? (
+                  <div className="flex items-center justify-center py-6">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  </div>
+                ) : shareLink ? (
+                  <div className="flex items-center gap-2">
+                    <Input value={shareLink} readOnly className="text-sm" />
+                    <Button size="icon" variant="outline" onClick={handleCopyLink}>
+                      {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                ) : null}
+              </DialogContent>
+            </Dialog>
             <Link to="/matrix">
               <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Users className="mr-1 h-4 w-4" /> Matrix
