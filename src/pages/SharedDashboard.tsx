@@ -57,46 +57,33 @@ const SharedDashboard = () => {
   const loadSharedData = async () => {
     setLoading(true);
     try {
-      // Look up the share by token
-      const { data: share, error: shareErr } = await supabase
-        .from("dashboard_shares")
-        .select("owner_id")
-        .eq("token", token!)
-        .single();
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      if (!currentSession) return;
 
-      if (shareErr || !share) {
-        setError("This share link is invalid or has been revoked.");
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-shared-dashboard?token=${encodeURIComponent(token!)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${currentSession.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const err = await response.json();
+        setError(err.error || "This share link is invalid or has been revoked.");
         setLoading(false);
         return;
       }
 
-      const ownerId = (share as any).owner_id;
+      const data = await response.json();
+      setOwnerName(data.ownerName);
 
-      // Get owner's profile
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("display_name")
-        .eq("id", ownerId)
-        .single();
-
-      setOwnerName(profile?.display_name || "Someone");
-
-      // Get owner's uploads
-      const { data: uploadsData } = await supabase
-        .from("chat_uploads")
-        .select("*")
-        .eq("user_id", ownerId)
-        .order("created_at", { ascending: false });
-
-      // Get analyses for categories
-      const { data: analysesData } = await supabase
-        .from("chat_analyses")
-        .select("upload_id, relationships")
-        .eq("user_id", ownerId);
-
+      // Build category map from analyses
       const categoryMap = new Map<string, string>();
-      if (analysesData) {
-        for (const a of analysesData as any[]) {
+      if (data.analyses) {
+        for (const a of data.analyses) {
           const rels = Array.isArray(a.relationships) ? a.relationships : [];
           if (rels.length === 0) continue;
           const counts: Record<string, number> = {};
@@ -110,7 +97,7 @@ const SharedDashboard = () => {
         }
       }
 
-      const enriched = ((uploadsData as any[]) || []).map((u) => ({
+      const enriched = (data.uploads || []).map((u: any) => ({
         ...u,
         category: u.category_override || categoryMap.get(u.id) || "uncategorized",
       }));
@@ -132,7 +119,6 @@ const SharedDashboard = () => {
   }
 
   if (!session) {
-    // Save the intended destination and redirect to auth
     sessionStorage.setItem("redirect_after_auth", `/shared/${token}`);
     return <Navigate to="/auth" replace />;
   }

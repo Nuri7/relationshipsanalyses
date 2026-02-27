@@ -174,11 +174,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_active_share: { Args: { target_user_id: string }; Returns: boolean }
-      is_shared_with_user: {
-        Args: { target_user_id: string }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
