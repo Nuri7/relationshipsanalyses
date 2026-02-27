@@ -103,6 +103,30 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_shares: {
+        Row: {
+          created_at: string
+          id: string
+          label: string | null
+          owner_id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label?: string | null
+          owner_id: string
+          token?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string | null
+          owner_id?: string
+          token?: string
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           created_at: string
@@ -150,7 +174,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_active_share: { Args: { target_user_id: string }; Returns: boolean }
+      is_shared_with_user: {
+        Args: { target_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
