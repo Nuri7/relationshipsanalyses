@@ -145,19 +145,20 @@ const Dashboard = () => {
         className="cursor-pointer transition-shadow hover:shadow-md"
         onClick={() => { if (upload.status === "completed") navigate(`/analysis/${upload.id}`); }}
       >
-        <CardContent className="flex items-center gap-4 py-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-            <MessageCircle className="h-6 w-6 text-primary" />
+        <CardContent className="flex items-start gap-3 py-4 sm:items-center sm:gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 sm:h-12 sm:w-12">
+            <MessageCircle className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate font-medium">{upload.filename}</p>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{format(new Date(upload.created_at), "MMM d, yyyy")}</span>
-              <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" />{upload.message_count} msgs</span>
+            <p className="truncate text-sm font-medium sm:text-base">{upload.filename}</p>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground sm:text-sm">
+              <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{format(new Date(upload.created_at), "MMM d")}</span>
+              <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" />{upload.message_count}</span>
               <span className="flex items-center gap-1"><Users className="h-3 w-3" />{upload.participant_count}</span>
             </div>
           </div>
-          <Badge variant={statusColor(upload.status) as any}>{upload.status}</Badge>
+          <div className="flex shrink-0 items-center gap-1">
+            <Badge variant={statusColor(upload.status) as any} className="text-xs">{upload.status}</Badge>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="shrink-0 text-muted-foreground hover:text-foreground" onClick={(e) => e.stopPropagation()}>
@@ -197,6 +198,7 @@ const Dashboard = () => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -206,23 +208,26 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary overflow-hidden">
-              <img src="/favicon.png" alt="Logo" className="h-8 w-8 object-contain" />
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:py-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary overflow-hidden sm:h-10 sm:w-10">
+              <img src="/favicon.png" alt="Logo" className="h-7 w-7 object-contain sm:h-8 sm:w-8" />
             </div>
             <div>
-              <h1 className="text-lg font-bold">Relationship Analyzer</h1>
+              <h1 className="text-base font-bold sm:text-lg">Relationship Analyzer</h1>
               <p className="text-xs text-muted-foreground">Welcome, {userName}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Link to="/matrix">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Users className="mr-1 h-4 w-4" /> Matrix
               </Button>
+              <Button variant="ghost" size="icon" className="sm:hidden">
+                <Users className="h-4 w-4" />
+              </Button>
             </Link>
-            <Link to="/feedback">
+            <Link to="/feedback" className="hidden sm:block">
               <Button variant="ghost" size="sm">Feedback</Button>
             </Link>
             <Button variant="ghost" size="icon" onClick={handleLogout}>
@@ -234,11 +239,11 @@ const Dashboard = () => {
 
       {/* Content */}
       <main className="mx-auto max-w-5xl px-4 py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Your Analyses</h2>
+        <div className="mb-6 flex items-center justify-between sm:mb-8">
+          <h2 className="text-xl font-bold sm:text-2xl">Your Analyses</h2>
           <Link to="/upload">
-            <Button>
-              <Upload className="mr-2 h-4 w-4" /> Upload Chat
+            <Button size="sm">
+              <Upload className="mr-2 h-4 w-4" /> Upload
             </Button>
           </Link>
         </div>
