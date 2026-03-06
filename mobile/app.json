@@ -23,25 +23,29 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#7C3AED"
       },
-      "package": "com.relationshipanalyzer.app"
+      "package": "com.relationshipanalyzer.app",
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      [
-        "expo-file-system",
-        {
-          "supportsOpeningDocumentsInPlace": true,
-          "enableFileSharing": true
-        }
-      ],
+      "expo-file-system",
       [
         "expo-document-picker",
         {
           "iCloudContainerEnvironment": "Production"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "86a274d0-e3d9-4fb2-b052-5fa3f84476a8"
+      }
+    }
   }
 }
