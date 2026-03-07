@@ -16,6 +16,7 @@ import CommunicationMatrix from "./pages/CommunicationMatrix";
 import MyRelationships from "./pages/MyRelationships";
 import Features from "./pages/Features";
 import SharedDashboard from "./pages/SharedDashboard";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
