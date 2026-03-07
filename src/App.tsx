@@ -73,6 +73,7 @@ const App = () => {
             <Route path="/my-relationships" element={<ProtectedRoute session={session}><MyRelationships /></ProtectedRoute>} />
             <Route path="/shared/:token" element={<SharedDashboard />} />
             <Route path="/features" element={<Features />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
