@@ -110,6 +110,11 @@ const Auth = () => {
           </p>
         </CardContent>
       </Card>
+      <footer className="mt-8 text-center">
+        <Link to="/privacy" className="text-xs text-muted-foreground hover:text-primary hover:underline transition-colors">
+          Privacy Policy
+        </Link>
+      </footer>
     </div>
   );
 };
