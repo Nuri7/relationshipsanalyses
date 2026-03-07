@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -110,6 +111,11 @@ const Auth = () => {
           </p>
         </CardContent>
       </Card>
+      <footer className="mt-8 text-center">
+        <Link to="/privacy" className="text-xs text-muted-foreground hover:text-primary hover:underline transition-colors">
+          Privacy Policy
+        </Link>
+      </footer>
     </div>
   );
 };
