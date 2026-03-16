@@ -16,6 +16,7 @@ import CommunicationMatrix from "./pages/CommunicationMatrix";
 import MyRelationships from "./pages/MyRelationships";
 import Features from "./pages/Features";
 import SharedDashboard from "./pages/SharedDashboard";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,6 +73,7 @@ const App = () => {
             <Route path="/my-relationships" element={<ProtectedRoute session={session}><MyRelationships /></ProtectedRoute>} />
             <Route path="/shared/:token" element={<SharedDashboard />} />
             <Route path="/features" element={<Features />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
