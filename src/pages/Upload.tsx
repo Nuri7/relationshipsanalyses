@@ -1,14 +1,14 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { parseWhatsAppChat, formatChatForAI } from "@/lib/chatParser";
+import { parseGenericChat, formatChatForAI } from "@/lib/chatParser";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { Upload as UploadIcon, FileText, X, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-
+import JSZip from "jszip";
 const Upload = () => {
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -33,10 +33,10 @@ const Upload = () => {
   }, []);
 
   const validateAndSetFile = (f: File) => {
-    const validTypes = [".txt", ".zip"];
+    const validTypes = [".txt", ".zip", ".csv", ".json"];
     const ext = f.name.substring(f.name.lastIndexOf(".")).toLowerCase();
     if (!validTypes.includes(ext)) {
-      toast({ title: "Invalid file", description: "Please upload a .txt or .zip file", variant: "destructive" });
+      toast({ title: "Invalid file", description: "Please upload a .txt, .csv, .json, or .zip file", variant: "destructive" });
       return;
     }
     if (f.size > 20 * 1024 * 1024) {
@@ -58,11 +58,28 @@ const Upload = () => {
 
       // Read file content
       let chatText = "";
-      if (file.name.endsWith(".txt")) {
+      let uploadFile = file;
+
+      if (file.name.endsWith(".txt") || file.name.endsWith(".csv") || file.name.endsWith(".json")) {
         chatText = await file.text();
+      } else if (file.name.endsWith(".zip")) {
+        const zip = new JSZip();
+        const loadedZip = await zip.loadAsync(file);
+        
+        const chatFileMatch = Object.values(loadedZip.files).find(
+          (f) => !f.dir && (f.name.endsWith(".txt") || f.name.endsWith(".json") || f.name.endsWith(".csv"))
+        );
+
+        if (!chatFileMatch) {
+          toast({ title: "No chat found", description: "Found a ZIP, but couldn't locate a valid chat export inside.", variant: "destructive" });
+          setUploading(false);
+          return;
+        }
+
+        chatText = await chatFileMatch.async("text");
+        uploadFile = new File([chatText], chatFileMatch.name, { type: "text/plain" });
       } else {
-        // For zip files, we'd need JSZip - for now handle .txt only
-        toast({ title: "ZIP support", description: "ZIP files will be supported soon. Please upload the .txt file directly.", variant: "destructive" });
+        toast({ title: "Unsupported format", description: "Please upload a valid chat export.", variant: "destructive" });
         setUploading(false);
         return;
       }
@@ -70,7 +87,7 @@ const Upload = () => {
       setProgress(20);
       setStatus("Parsing chat...");
 
-      const parsed = parseWhatsAppChat(chatText);
+      const parsed = parseGenericChat(chatText);
       if (parsed.messages.length === 0) {
         toast({ title: "No messages found", description: "Could not parse any messages. Make sure this is a valid WhatsApp chat export.", variant: "destructive" });
         setUploading(false);
@@ -90,7 +107,7 @@ const Upload = () => {
       const filePath = `${user.id}/${Date.now()}_${sanitizedName}`;
       const { error: storageError } = await supabase.storage
         .from("chat-files")
-        .upload(filePath, file);
+        .upload(filePath, uploadFile);
 
       if (storageError) throw storageError;
 
@@ -172,7 +189,7 @@ const Upload = () => {
               <p className="mb-4 text-sm text-muted-foreground">or click to browse</p>
               <input
                 type="file"
-                accept=".txt,.zip"
+                accept=".txt,.zip,.csv,.json"
                 className="hidden"
                 id="file-input"
                 onChange={(e) => e.target.files?.[0] && validateAndSetFile(e.target.files[0])}

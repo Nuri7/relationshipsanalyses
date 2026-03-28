@@ -24,14 +24,15 @@ serve(async (req) => {
     // Truncate chat text if too long (keep first ~15000 chars for AI context)
     const truncatedText = chatText.length > 15000 ? chatText.slice(0, 15000) + "\n...[truncated]" : chatText;
 
-    const systemPrompt = `You are a chat conversation analyst. Analyze the following WhatsApp/chat export and return a JSON object with exactly this structure:
+const systemPrompt = `You are a chat conversation analyst. Analyze the following WhatsApp/chat export and return a JSON object with exactly this structure:
 {
-  "summary": "A concise summary (max 300 words) of key topics, events, and overall tone. Use bullet points for main highlights.",
+  "summary": "A concise summary (max 400 words) of key topics, events, and overall tone. MUST include two specific sections formatted with markdown headers: '### Timeline Progression' (describing how the dynamic evolved over Beginning, Middle, Current phases) and '### Hall of Fame' (listing 3 exact, iconic, or funny quotes from the text).",
   "characteristics": [
     {
       "name": "Person Name",
       "traits": ["trait1", "trait2", "trait3"],
       "description": "2-3 sentence description of this person's communication style",
+      "archetype": "A fun 2-3 word title, e.g., 'The Novelist', 'The Ghost', 'Emoji Expert'",
       "messageCount": number,
       "topEmojis": ["emoji1", "emoji2"],
       "dominantTone": "e.g. humorous, analytical, supportive"
