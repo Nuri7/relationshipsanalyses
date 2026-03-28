@@ -62,7 +62,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Routes>
             <Route path="/auth" element={session ? (() => { const r = sessionStorage.getItem("redirect_after_auth"); sessionStorage.removeItem("redirect_after_auth"); return <Navigate to={r || "/"} replace />; })() : <Auth />} />
             <Route path="/" element={<ProtectedRoute session={session}><Dashboard /></ProtectedRoute>} />
