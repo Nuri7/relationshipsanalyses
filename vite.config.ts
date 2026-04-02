@@ -32,8 +32,9 @@ export default defineConfig(({ mode }) => ({
         background_color: "#F5F5F8",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/relationshipsanalyses/",
-        scope: "/relationshipsanalyses/",
+        id: "https://nuri7.github.io/relationshipsanalyses/",
+        start_url: "https://nuri7.github.io/relationshipsanalyses/",
+        scope: "https://nuri7.github.io/relationshipsanalyses/",
         icons: [
           { src: "favicon.png", sizes: "192x192", type: "image/png" },
           { src: "app-icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
