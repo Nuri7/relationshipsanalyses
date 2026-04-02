@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,7 +32,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Network, Upload, LogOut, Clock, Users, MessageCircle, Trash2, Home, Handshake, Briefcase, FolderSync, Share2, Copy, Check, Link as LinkIcon } from "lucide-react";
+import { Network, Upload, LogOut, Clock, Users, MessageCircle, Trash2, Home, Handshake, Briefcase, FolderSync, Share2, Copy, Check, Link as LinkIcon, Smartphone } from "lucide-react";
 import { format } from "date-fns";
 
 interface ChatUpload {
@@ -275,7 +276,27 @@ const Dashboard = () => {
               <p className="text-xs text-muted-foreground">Welcome, {userName}</p>
             </div>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="hidden sm:flex gap-2 h-9 border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 hover:text-primary">
+                  <Smartphone className="h-4 w-4" />
+                  Get App
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md flex flex-col items-center justify-center py-10">
+                <DialogHeader>
+                  <DialogTitle className="text-center text-xl">Get the Mobile App</DialogTitle>
+                  <DialogDescription className="text-center">
+                    Open your phone's camera and scan this code to view and install the app on your mobile device.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="mt-6 rounded-2xl bg-white p-4 shadow-sm border">
+                  <QRCodeSVG value={window.location.href} size={220} level="M" />
+                </div>
+              </DialogContent>
+            </Dialog>
+
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="icon" onClick={handleShare}>

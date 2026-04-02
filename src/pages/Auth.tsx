@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -111,6 +112,13 @@ const Auth = () => {
           </p>
         </CardContent>
       </Card>
+
+      <div className="mt-8 hidden flex-col items-center justify-center gap-2 text-center text-sm text-muted-foreground md:flex">
+        <p>Scan to use the app on mobile</p>
+        <div className="rounded-xl bg-white p-3 shadow-sm transition-transform hover:scale-105">
+          <QRCodeSVG value={window.location.href} size={150} level="M" />
+        </div>
+      </div>
     </div>
   );
 };

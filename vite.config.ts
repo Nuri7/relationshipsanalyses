@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.png", "favicon.ico"],
+      includeAssets: ["favicon.png", "favicon.ico", "app-icon-512.png"],
       workbox: {
         navigateFallbackDenylist: [/^\/~oauth/],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
@@ -32,10 +32,12 @@ export default defineConfig(({ mode }) => ({
         background_color: "#F5F5F8",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
+        start_url: "/relationshipsanalyses/",
+        scope: "/relationshipsanalyses/",
         icons: [
-          { src: "/favicon.png", sizes: "192x192", type: "image/png" },
-          { src: "/favicon.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+          { src: "favicon.png", sizes: "192x192", type: "image/png" },
+          { src: "app-icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+          { src: "app-icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
         ],
       },
     }),
