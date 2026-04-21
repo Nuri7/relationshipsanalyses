@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { parseGenericChat, generateChatStats, ChatStats } from "@/lib/chatParser";
+import { parseGenericChat, generateChatStats, ChatStats, type ParsedMessage } from "@/lib/chatParser";
+import ChatBubbleViewer from "@/components/ChatBubbleViewer";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, BarChart, Bar } from "recharts";
 import ReactMarkdown from "react-markdown";
 import html2canvas from "html2canvas";
@@ -15,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import {
   ArrowLeft, Download, Users, Heart, Briefcase, Home, UserCircle,
-  Edit, Save, X, Eye, EyeOff, Share2, Flame, Moon, Ghost, Mic, Trophy
+  Edit, Save, X, Eye, EyeOff, Share2, Flame, Moon, Ghost, Mic, Trophy, MessageCircle
 } from "lucide-react";
 
 interface Characteristic {
@@ -65,6 +66,7 @@ const AnalysisPage = () => {
   const [summaryDraft, setSummaryDraft] = useState("");
   const [anonymized, setAnonymized] = useState(false);
   const [chatStats, setChatStats] = useState<ChatStats | null>(null);
+  const [chatMessages, setChatMessages] = useState<ParsedMessage[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -109,6 +111,7 @@ const AnalysisPage = () => {
           const parsed = parseGenericChat(text);
           const stats = generateChatStats(parsed.messages);
           setChatStats(stats);
+          setChatMessages(parsed.messages);
         }
       } catch (err) {
         console.error("Failed to load chat stats", err);
@@ -285,7 +288,7 @@ const AnalysisPage = () => {
 
       {/* Header */}
       <header className="border-b bg-card">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+        <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <Link to="/" className="text-muted-foreground hover:text-foreground">
               <ArrowLeft className="h-5 w-5" />
@@ -295,7 +298,7 @@ const AnalysisPage = () => {
               <p className="text-xs text-muted-foreground">{upload?.message_count} messages • {analysis.participants.length} participants</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-2">
               {anonymized ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
               <Label htmlFor="anon" className="text-sm">Anonymize</Label>
@@ -305,7 +308,7 @@ const AnalysisPage = () => {
               <Download className="mr-2 h-4 w-4" /> Export PDF
             </Button>
             <Button size="sm" onClick={exportSocialCard}>
-              <Share2 className="mr-2 h-4 w-4" /> Export Instagram Card
+              <Share2 className="mr-2 h-4 w-4" /> Export Card
             </Button>
           </div>
         </div>
@@ -314,16 +317,22 @@ const AnalysisPage = () => {
       {/* Content */}
       <main className="mx-auto max-w-5xl px-4 py-8">
         <Tabs defaultValue="summary">
-          <TabsList className="mb-6 w-full justify-start overflow-x-auto">
-            <TabsTrigger value="summary">Summary</TabsTrigger>
-            <TabsTrigger value="profiles">Profiles</TabsTrigger>
-            <TabsTrigger value="relationships">Relationships</TabsTrigger>
-            <TabsTrigger value="effort">Effort</TabsTrigger>
-            <TabsTrigger value="visualizations">Visualizations</TabsTrigger>
-            <TabsTrigger value="vibes">Vibes & Words</TabsTrigger>
-            <TabsTrigger value="habits">Habits</TabsTrigger>
-            <TabsTrigger value="awards">Awards</TabsTrigger>
-          </TabsList>
+          <div className="relative mb-6">
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none z-10 sm:hidden" />
+            <TabsList className="w-full justify-start overflow-x-auto scrollbar-hide">
+              <TabsTrigger value="summary">Summary</TabsTrigger>
+              <TabsTrigger value="profiles">Profiles</TabsTrigger>
+              <TabsTrigger value="relationships">Relationships</TabsTrigger>
+              <TabsTrigger value="effort">Effort</TabsTrigger>
+              <TabsTrigger value="visualizations">Visualizations</TabsTrigger>
+              <TabsTrigger value="vibes">Vibes & Words</TabsTrigger>
+              <TabsTrigger value="conversation" className="flex items-center gap-1.5">
+                <MessageCircle className="h-3.5 w-3.5" /> Chat
+              </TabsTrigger>
+              <TabsTrigger value="habits">Habits</TabsTrigger>
+              <TabsTrigger value="awards">Awards</TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Summary Tab */}
           <TabsContent value="summary" className="space-y-6">
@@ -530,7 +539,7 @@ const AnalysisPage = () => {
                         <XAxis dataKey="date" />
                         <YAxis />
                         <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.5} />
-                        <RechartsTooltip contentStyle={{ borderRadius: "8px", border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }} />
+                        <RechartsTooltip contentStyle={{ borderRadius: "8px", border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", color: "hsl(var(--foreground))" }} />
                         {analysis.participants.map((p, i) => (
                           <Area key={p} type="monotone" dataKey={`counts.${p}`} name={getDisplayName(p)} stroke={`hsl(var(--chart-${(i % 5) + 1}))`} fillOpacity={1} fill={`url(#color${i})`} />
                         ))}
@@ -565,7 +574,7 @@ const AnalysisPage = () => {
                               <Cell key={`cell-i-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
                             ))}
                           </Pie>
-                          <RechartsTooltip contentStyle={{ borderRadius: "8px", border: "none", background: "hsl(var(--card))" }} />
+                          <RechartsTooltip contentStyle={{ borderRadius: "8px", border: "none", background: "hsl(var(--card))", color: "hsl(var(--foreground))" }} />
                           <Legend />
                         </PieChart>
                       </ResponsiveContainer>
@@ -671,7 +680,7 @@ const AnalysisPage = () => {
                               <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
                             ))}
                           </Pie>
-                          <RechartsTooltip contentStyle={{ borderRadius: "8px", border: "none", background: "hsl(var(--card))" }} />
+                          <RechartsTooltip contentStyle={{ borderRadius: "8px", border: "none", background: "hsl(var(--card))", color: "hsl(var(--foreground))" }} />
                           <Legend />
                         </PieChart>
                       </ResponsiveContainer>
@@ -844,19 +853,21 @@ const AnalysisPage = () => {
                     <CardDescription>Messages sent between 12 AM and 5 AM.</CardDescription>
                   </CardHeader>
                   <CardContent className="flex-1 space-y-4">
-                    {analysis.participants.map((p, i) => {
-                      const msgs = chatStats.participantStats[p]?.lateNightMessages || 0;
-                      return (
-                        <div key={p} className="flex items-center justify-between border-b pb-2 last:border-0">
-                          <span className="font-medium">{getDisplayName(p)}</span>
-                          <Badge variant={i === 0 ? "default" : "secondary"}>{msgs} msgs</Badge>
-                        </div>
-                      );
-                    }).sort((a, b) => {
-                      const aVal = parseInt((a.props.children?.[1]?.props?.children?.[0] as unknown as string) || "0");
-                      const bVal = parseInt((b.props.children?.[1]?.props?.children?.[0] as unknown as string) || "0");
-                      return bVal - aVal;
-                    })}
+                    {[...analysis.participants]
+                      .sort((a, b) => {
+                        const aMsg = chatStats.participantStats[a]?.lateNightMessages || 0;
+                        const bMsg = chatStats.participantStats[b]?.lateNightMessages || 0;
+                        return bMsg - aMsg;
+                      })
+                      .map((p, i) => {
+                        const msgs = chatStats.participantStats[p]?.lateNightMessages || 0;
+                        return (
+                          <div key={p} className="flex items-center justify-between border-b pb-2 last:border-0">
+                            <span className="font-medium">{getDisplayName(p)}</span>
+                            <Badge variant={i === 0 ? "default" : "secondary"}>{msgs} msgs</Badge>
+                          </div>
+                        );
+                      })}
                   </CardContent>
                 </Card>
 
@@ -960,6 +971,24 @@ const AnalysisPage = () => {
                   ));
                 })()}
               </div>
+            )}
+          </TabsContent>
+
+          {/* Conversation Tab */}
+          <TabsContent value="conversation">
+            {chatMessages.length > 0 ? (
+              <ChatBubbleViewer
+                messages={chatMessages}
+                participants={analysis.participants}
+                chatName={upload?.filename?.replace('.txt', '').replace('.zip', '') || 'Chat'}
+              />
+            ) : (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center p-12 text-muted-foreground">
+                  <MessageCircle className="h-12 w-12 mb-4 opacity-50" />
+                  <p>Loading conversation...</p>
+                </CardContent>
+              </Card>
             )}
           </TabsContent>
         </Tabs>

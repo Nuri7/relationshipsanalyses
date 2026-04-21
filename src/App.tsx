@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -58,27 +59,29 @@ const App = () => {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter basename={import.meta.env.BASE_URL}>
-          <Routes>
-            <Route path="/auth" element={session ? (() => { const r = sessionStorage.getItem("redirect_after_auth"); sessionStorage.removeItem("redirect_after_auth"); return <Navigate to={r || "/"} replace />; })() : <Auth />} />
-            <Route path="/" element={<ProtectedRoute session={session}><Dashboard /></ProtectedRoute>} />
-            <Route path="/upload" element={<ProtectedRoute session={session}><Upload /></ProtectedRoute>} />
-            <Route path="/analysis/:uploadId" element={<ProtectedRoute session={session}><Analysis /></ProtectedRoute>} />
-            <Route path="/feedback" element={<ProtectedRoute session={session}><Feedback /></ProtectedRoute>} />
-            <Route path="/matrix" element={<ProtectedRoute session={session}><CommunicationMatrix /></ProtectedRoute>} />
-            <Route path="/my-relationships" element={<ProtectedRoute session={session}><MyRelationships /></ProtectedRoute>} />
-            <Route path="/shared/:token" element={<SharedDashboard />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter basename={import.meta.env.BASE_URL}>
+            <Routes>
+              <Route path="/auth" element={session ? (() => { const r = sessionStorage.getItem("redirect_after_auth"); sessionStorage.removeItem("redirect_after_auth"); return <Navigate to={r || "/"} replace />; })() : <Auth />} />
+              <Route path="/" element={<ProtectedRoute session={session}><Dashboard /></ProtectedRoute>} />
+              <Route path="/upload" element={<ProtectedRoute session={session}><Upload /></ProtectedRoute>} />
+              <Route path="/analysis/:uploadId" element={<ProtectedRoute session={session}><Analysis /></ProtectedRoute>} />
+              <Route path="/feedback" element={<ProtectedRoute session={session}><Feedback /></ProtectedRoute>} />
+              <Route path="/matrix" element={<ProtectedRoute session={session}><CommunicationMatrix /></ProtectedRoute>} />
+              <Route path="/my-relationships" element={<ProtectedRoute session={session}><MyRelationships /></ProtectedRoute>} />
+              <Route path="/shared/:token" element={<SharedDashboard />} />
+              <Route path="/features" element={<Features />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 

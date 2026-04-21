@@ -50,7 +50,7 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary overflow-hidden">
-            <img src="/favicon.png" alt="Logo" className="h-10 w-10 object-contain" />
+            <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="Logo" className="h-10 w-10 object-contain" />
           </div>
           <CardTitle className="text-2xl">Relationship Analyzer</CardTitle>
           <CardDescription>
@@ -82,28 +82,30 @@ const Auth = () => {
             <span className="text-xs text-muted-foreground">OR</span>
             <Separator className="flex-1" />
           </div>
-          <Button
-            variant="outline"
-            className="w-full gap-2"
-            disabled={loading}
-            onClick={async () => {
-              setLoading(true);
-              try {
-                const { error } = await supabase.auth.signInWithPassword({
-                  email: "demo@example.com",
-                  password: "demo1234",
-                });
-                if (error) throw error;
-              } catch (error: any) {
-                toast({ title: "Error", description: error.message, variant: "destructive" });
-              } finally {
-                setLoading(false);
-              }
-            }}
-          >
-            <Zap className="h-4 w-4" />
-            Quick Demo Login
-          </Button>
+          {import.meta.env.VITE_ENABLE_DEMO === "true" && (
+            <Button
+              variant="outline"
+              className="w-full gap-2"
+              disabled={loading}
+              onClick={async () => {
+                setLoading(true);
+                try {
+                  const { error } = await supabase.auth.signInWithPassword({
+                    email: import.meta.env.VITE_DEMO_EMAIL || "demo@example.com",
+                    password: import.meta.env.VITE_DEMO_PASSWORD || "demo1234",
+                  });
+                  if (error) throw error;
+                } catch (error: any) {
+                  toast({ title: "Error", description: error.message, variant: "destructive" });
+                } finally {
+                  setLoading(false);
+                }
+              }}
+            >
+              <Zap className="h-4 w-4" />
+              Quick Demo Login
+            </Button>
+          )}
           <p className="mt-4 text-center text-sm text-muted-foreground">
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <button onClick={() => setIsLogin(!isLogin)} className="font-medium text-primary hover:underline">

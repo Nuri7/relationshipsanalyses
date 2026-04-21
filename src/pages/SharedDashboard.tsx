@@ -164,7 +164,7 @@ const SharedDashboard = () => {
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary overflow-hidden sm:h-10 sm:w-10">
-              <img src="/favicon.png" alt="Logo" className="h-7 w-7 object-contain sm:h-8 sm:w-8" />
+              <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="Logo" className="h-7 w-7 object-contain sm:h-8 sm:w-8" />
             </div>
             <div>
               <h1 className="text-base font-bold sm:text-lg">Shared Dashboard</h1>

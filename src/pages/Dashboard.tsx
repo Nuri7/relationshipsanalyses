@@ -269,7 +269,7 @@ const Dashboard = () => {
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary overflow-hidden sm:h-10 sm:w-10">
-              <img src="/favicon.png" alt="Logo" className="h-7 w-7 object-contain sm:h-8 sm:w-8" />
+              <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="Logo" className="h-7 w-7 object-contain sm:h-8 sm:w-8" />
             </div>
             <div>
               <h1 className="text-base font-bold sm:text-lg">Relationship Analyzer</h1>
@@ -292,7 +292,7 @@ const Dashboard = () => {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="mt-6 rounded-2xl bg-white p-4 shadow-sm border">
-                  <QRCodeSVG value={window.location.href} size={220} level="M" />
+                  <QRCodeSVG value={`${window.location.origin}${import.meta.env.BASE_URL}`} size={220} level="M" />
                 </div>
               </DialogContent>
             </Dialog>
@@ -372,11 +372,11 @@ const Dashboard = () => {
           </Card>
         ) : (
           <div className="space-y-8">
-            {[
-              { key: "family", label: "Family", icon: <Home className="h-5 w-5" />, hsl: "var(--category-family)" },
-              { key: "friends", label: "Friends", icon: <Handshake className="h-5 w-5" />, hsl: "var(--category-friends)" },
-              { key: "professional", label: "Professional", icon: <Briefcase className="h-5 w-5" />, hsl: "var(--category-professional)" },
-            ].map(({ key, label, icon, hsl }) => {
+            {([
+              { key: "family", label: "Family", Icon: Home, hsl: "var(--category-family)" },
+              { key: "friends", label: "Friends", Icon: Handshake, hsl: "var(--category-friends)" },
+              { key: "professional", label: "Professional", Icon: Briefcase, hsl: "var(--category-professional)" },
+            ] as const).map(({ key, label, Icon, hsl }) => {
               const items = uploads.filter((u) => u.category === key);
               if (items.length === 0) return null;
               return (
@@ -390,7 +390,7 @@ const Dashboard = () => {
                   } as React.CSSProperties}
                 >
                   <div className="mb-4 flex items-center gap-2" style={{ color: `hsl(${hsl})` }}>
-                    {icon}
+                    <Icon className="h-5 w-5" />
                     <h3 className="text-sm font-bold uppercase tracking-wide">{label}</h3>
                     <Badge className="ml-1 border-0" style={{ backgroundColor: `hsl(${hsl} / 0.15)`, color: `hsl(${hsl})` }}>{items.length}</Badge>
                   </div>

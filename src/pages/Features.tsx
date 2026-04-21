@@ -62,7 +62,7 @@ const Features = () => {
             </Button>
           </Link>
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary overflow-hidden">
-            <img src="/favicon.png" alt="Logo" className="h-8 w-8 object-contain" />
+            <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="Logo" className="h-8 w-8 object-contain" />
           </div>
           <h1 className="text-lg font-bold">Relationship Analyzer</h1>
         </div>

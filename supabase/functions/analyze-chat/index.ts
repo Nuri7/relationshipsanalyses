@@ -142,6 +142,19 @@ Return ONLY valid JSON, no markdown.`;
     });
   } catch (e) {
     console.error("analyze-chat error:", e);
+    // Mark the upload as errored so it doesn't get stuck on "analyzing"
+    try {
+      const { uploadId: failedUploadId } = await req.clone().json().catch(() => ({ uploadId: undefined }));
+      if (failedUploadId) {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        await supabase.from("chat_uploads").update({
+          status: "error",
+          error_message: e instanceof Error ? e.message : "Unknown error"
+        }).eq("id", failedUploadId);
+      }
+    } catch { /* ignore secondary errors */ }
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -14,6 +14,16 @@ export default {
     },
     extend: {
       colors: {
+        whatsapp: {
+          incoming: '#202c33',
+          outgoing: '#005c4b',
+          bg: '#0b141a',
+          panel: '#111b21',
+          border: '#222d34',
+          text: '#e9edef',
+          muted: '#8696a0',
+          highlight: '#00a884',
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

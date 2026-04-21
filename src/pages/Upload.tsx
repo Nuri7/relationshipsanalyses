@@ -185,8 +185,14 @@ const Upload = () => {
               }`}
             >
               <UploadIcon className="mb-4 h-10 w-10 text-muted-foreground" />
-              <p className="mb-2 text-lg font-medium">Drag & drop your chat export</p>
-              <p className="mb-4 text-sm text-muted-foreground">or click to browse</p>
+              <p className="mb-2 text-lg font-medium">
+                <span className="hidden sm:inline">Drag & drop your chat export</span>
+                <span className="sm:hidden">Tap to select your chat export</span>
+              </p>
+              <p className="mb-4 text-sm text-muted-foreground">
+                <span className="hidden sm:inline">or click to browse</span>
+                <span className="sm:hidden">.txt, .zip, .csv, or .json</span>
+              </p>
               <input
                 type="file"
                 accept=".txt,.zip,.csv,.json"
