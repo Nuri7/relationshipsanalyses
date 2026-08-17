@@ -1,1 +1,4 @@
-project_id = "jlwrbbevbugurtkkojfx"
+# Local identifier only — this names the Docker containers of `supabase start`.
+# It is NOT the remote project: that comes from the linked ref or
+# `--project-ref`. The documented default is the directory name.
+project_id = "Relationship_analyses"
